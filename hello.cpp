@@ -16,6 +16,6 @@ std::string farewell(const std::string& who) {
 int main() {
     std::cout << greeting("World") << "\n";
     std::cout << farewell("World") << "\n";
-    std::cout << "version " << APP_VERSION << "\n";
+    std::cout << "hello version " << APP_VERSION << "\n";
     return 0;
 }
