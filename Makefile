@@ -1,7 +1,8 @@
 CXX      ?= g++
-CXXFLAGS ?= -std=c++17 -Wall -Wextra -O2
+VERSION  := $(shell cat VERSION)
+CXXFLAGS ?= -std=c++17 -Wall -Wextra -O2 -DAPP_VERSION=\"$(VERSION)\"
 
-hello: hello.cpp
+hello: hello.cpp VERSION
 	$(CXX) $(CXXFLAGS) -o hello hello.cpp
 
 .PHONY: run clean

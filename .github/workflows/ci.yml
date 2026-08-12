@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, develop, 'release/**', 'hotfix/**' ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  build:
+    name: Build and test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Show compiler version
+        run: g++ --version
+
+      - name: Build
+        run: make
+
+      - name: Run
+        run: ./hello
+
+      - name: Smoke test
+        run: |
+          ./hello | grep -q "Hello, World!"
+          ./hello | grep -q "version $(cat VERSION)"
+          echo "Smoke test passed"

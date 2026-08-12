@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write        # required to create a GitHub Release
+
+jobs:
+  release:
+    name: Build and publish release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Build release binary
+        run: make
+
+      - name: Verify version matches tag
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          FILE_VERSION="$(cat VERSION)"
+          echo "tag=$TAG file=$FILE_VERSION"
+          test "$TAG" = "$FILE_VERSION"
+
+      - name: Package artifact
+        run: tar -czf hello-${GITHUB_REF_NAME}-linux-x86_64.tar.gz hello VERSION README.md
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hello-${{ github.ref_name }}-linux-x86_64
+          path: hello-*.tar.gz
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes \
+            hello-*.tar.gz
