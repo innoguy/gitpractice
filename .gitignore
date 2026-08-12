@@ -1,0 +1,8 @@
+# Build artifacts
+hello
+*.o
+*.out
+build/
+
+# macOS
+.DS_Store
